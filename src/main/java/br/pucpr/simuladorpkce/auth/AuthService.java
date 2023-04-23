@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @Service
@@ -34,5 +37,20 @@ public class AuthService {
         challenges.put(code, challenge);
 
         return code;
+    }
+
+    public String generateAccessToken(String authCode, String verifier) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+        // digest retorna hash como byte[], o método utilitário converte para uma string hexadecimal
+        var hash = utils.bytesToHex(md.digest(verifier.getBytes(StandardCharsets.UTF_8)));
+
+        // codificar string hexadecimal SEM O PADDING
+        var base64Hash = Base64.getEncoder().withoutPadding().encodeToString(hash.getBytes());
+
+        if(!base64Hash.equals(challenges.get(authCode)))
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
+
+        return utils.generateRandomString(32);
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("/")
 public class AuthController {
@@ -22,7 +24,7 @@ public class AuthController {
     }
 
     @GetMapping("/exchange")
-    public AccessTokenResponseDTO exchange(@RequestParam String code, @RequestParam String verifier){
-        return new AccessTokenResponseDTO();
+    public AccessTokenResponseDTO exchange(@RequestParam String code, @RequestParam String verifier) throws NoSuchAlgorithmException {
+        return new AccessTokenResponseDTO(service.generateAccessToken(code, verifier));
     }
 }
