@@ -1,4 +1,4 @@
-package br.pucpr.simuladorpkce.auth.dto;
+package br.pucpr.simuladorpkce.PKCEAuth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

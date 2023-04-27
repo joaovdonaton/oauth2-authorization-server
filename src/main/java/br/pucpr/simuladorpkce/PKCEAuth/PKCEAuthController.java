@@ -1,7 +1,7 @@
-package br.pucpr.simuladorpkce.auth;
+package br.pucpr.simuladorpkce.PKCEAuth;
 
-import br.pucpr.simuladorpkce.auth.dto.AccessTokenResponseDTO;
-import br.pucpr.simuladorpkce.auth.dto.AuthCodeResponseDTO;
+import br.pucpr.simuladorpkce.PKCEAuth.dto.AccessTokenResponseDTO;
+import br.pucpr.simuladorpkce.PKCEAuth.dto.AuthCodeResponseDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
-@RequestMapping("/")
-public class AuthController {
-    private final AuthService service;
+@RequestMapping("/pkce/")
+public class PKCEAuthController {
+    private final PKCEAuthService service;
 
-    public AuthController(AuthService service) {
+    public PKCEAuthController(PKCEAuthService service) {
         this.service = service;
     }
 

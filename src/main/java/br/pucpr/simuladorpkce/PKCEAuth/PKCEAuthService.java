@@ -1,8 +1,7 @@
-package br.pucpr.simuladorpkce.auth;
+package br.pucpr.simuladorpkce.PKCEAuth;
 
 import br.pucpr.simuladorpkce.lib.utils.PKCEUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -12,10 +11,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @Service
-public class AuthService {
+public class PKCEAuthService {
     private final PKCEUtils utils;
 
-    public AuthService(PKCEUtils utils) {
+    public PKCEAuthService(PKCEUtils utils) {
         this.utils = utils;
     }
 
