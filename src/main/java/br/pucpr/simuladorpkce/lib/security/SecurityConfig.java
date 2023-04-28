@@ -8,11 +8,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+
 @Configuration
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity security) throws Exception{
-        return security
+
+        return security.headers().frameOptions().disable().and()
                 .cors().and().csrf().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
@@ -23,6 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/export/**").permitAll()
                         .requestMatchers("/pkce/**").permitAll()
                         .requestMatchers("/oidc/**").permitAll()
+                        .requestMatchers(toH2Console()).permitAll()
                         .anyRequest().authenticated())
                 .build();
     }

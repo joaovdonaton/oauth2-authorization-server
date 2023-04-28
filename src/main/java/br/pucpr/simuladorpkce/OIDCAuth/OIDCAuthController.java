@@ -1,5 +1,7 @@
 package br.pucpr.simuladorpkce.OIDCAuth;
 
+import br.pucpr.simuladorpkce.OIDCAuth.dto.RegisteredUserInfoDTO;
+import br.pucpr.simuladorpkce.users.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +17,9 @@ public class OIDCAuthController {
     }
 
     @GetMapping("/exchange")
-    public void registerUser(@RequestParam String code){
-        service.exchange(code);
+    public RegisteredUserInfoDTO registerUser(@RequestParam String code){
+        User u = service.exchange(code);
+
+        return new RegisteredUserInfoDTO(u.getEmail(), u.getName());
     }
 }
