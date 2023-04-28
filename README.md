@@ -4,6 +4,8 @@
 
 ### **Instruções Para Compilar:**
 - Clonar repositório
+- Criar arquivo ```application.properties``` no ```src/java/resources``` com as seguintes propriedades:
+  - a
 - Utilize o comando ```./mvnw spring-boot:run``` ou use o Intellij para compilar e rodar
 
 ### **Detalhes e Documentação:**

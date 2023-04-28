@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 @Configuration
 public class SecurityConfig {
@@ -20,6 +21,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/export/**").permitAll()
+                        .requestMatchers("/pkce/**").permitAll()
+                        .requestMatchers("/oidc/**").permitAll()
                         .anyRequest().authenticated())
                 .build();
     }
