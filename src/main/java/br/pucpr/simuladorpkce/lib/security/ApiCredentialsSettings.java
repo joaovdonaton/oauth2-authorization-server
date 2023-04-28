@@ -17,4 +17,5 @@ public class ApiCredentialsSettings {
     private String googleClientId;
     private String googleClientSecret;
     private String redirectUri;
+    private String googlePubKeysUrl;
 }
