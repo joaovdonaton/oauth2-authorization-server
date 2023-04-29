@@ -26,6 +26,7 @@ public class SecurityConfig {
                         .requestMatchers("/export/**").permitAll()
                         .requestMatchers("/pkce/**").permitAll()
                         .requestMatchers("/oidc/**").permitAll()
+                        .requestMatchers("/codegrant/**").permitAll()
                         .requestMatchers(toH2Console()).permitAll()
                         .anyRequest().authenticated())
                 .build();

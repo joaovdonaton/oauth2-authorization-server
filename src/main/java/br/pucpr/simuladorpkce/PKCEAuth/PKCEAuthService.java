@@ -1,7 +1,7 @@
 package br.pucpr.simuladorpkce.PKCEAuth;
 
 import br.pucpr.simuladorpkce.lib.error.exceptions.ApiException;
-import br.pucpr.simuladorpkce.lib.utils.PKCEUtils;
+import br.pucpr.simuladorpkce.lib.utils.SecurityUtils;
 import br.pucpr.simuladorpkce.users.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,10 @@ import java.util.*;
 
 @Service
 public class PKCEAuthService {
-    private final PKCEUtils utils;
+    private final SecurityUtils utils;
     private final UsersService usersService;
 
-    public PKCEAuthService(PKCEUtils utils, UsersService usersService) {
+    public PKCEAuthService(SecurityUtils utils, UsersService usersService) {
         this.utils = utils;
         this.usersService = usersService;
     }

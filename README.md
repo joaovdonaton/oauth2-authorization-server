@@ -13,8 +13,16 @@
   - Adicione a uri do oidc debugger (https://oidcdebugger.com/debug) e da aplicação nas urls autorizadas
 - Utilize o comando ```./mvnw spring-boot:run``` ou use o Intellij para compilar e rodar
 
-### **Detalhes e Documentação:**
+### Modo de Uso:
+- Usar o [oidc debugger](https://oidcdebugger.com/debug) para obter Authorization Code de uma conta.
+- Enviar Request para ```/oidc/exchange``` com o Code
+  - Persiste o usuário e suas informações na base de dados e retorna o clientId do user
+- Obter Access Token com o clientId através de ```/pkce/``` (**Authorization Code Grant With PKCE**) ou ```/codegrant/``` (**Authorization Code Grant**)
+  - As rotas ```/authorize``` desses endpoints validam o clientId e retornam o Auth Code (Como se estivessem simulando a tela de login)
+  - As rotas ```/exchange``` validam o verifier (PKCE) ou validam o appId e appSecret (Code Grant normal)
 
+### **Detalhes e Documentação:**
+- Swagger disponível em ```/api/oauth/swagger-ui/index.html``` para testes
 - Endpoints da API estão todos dentro do context path: ```/api/oauth/```
   - **Authorization Code Grant with PKCE**: ```/pkce/```
     - ```/authorize``` recebe o clientID e o challenge, retornar o Authorization Code

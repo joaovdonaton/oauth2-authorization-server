@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.NoSuchAlgorithmException;
 
 @RestController
-@RequestMapping("/pkce/")
+@RequestMapping("/codegrant/")
 public class CodeGrantAuthController {
     private final CodeGrantAuthService service;
 
@@ -23,8 +23,13 @@ public class CodeGrantAuthController {
         return new AuthCodeResponseDTO(service.generateAuthorizationCode(clientId), "1800");
     }
 
+    /**
+     * @param code authorization code do endpoint authorize
+     * @param appId client id do servidor
+     * @param appSecret client secret do servidor
+     */
     @GetMapping("/exchange")
-    public AccessTokenResponseDTO exchange(@RequestParam String code, @RequestParam String verifier) throws NoSuchAlgorithmException {
-        return new AccessTokenResponseDTO(service.generateAccessToken(code, verifier));
+    public AccessTokenResponseDTO exchange(@RequestParam String code, @RequestParam String appId, @RequestParam String appSecret) {
+        return new AccessTokenResponseDTO(service.generateAccessToken(code, appId, appSecret));
     }
 }

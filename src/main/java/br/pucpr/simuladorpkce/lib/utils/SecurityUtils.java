@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.Random;
 
 @Component
-public class PKCEUtils {
+public class SecurityUtils {
     public String generateRandomString(int length){
         Random r = new Random();
 
