@@ -15,7 +15,7 @@
 
 ### Modo de Uso:
 - Usar o [oidc debugger](https://oidcdebugger.com/debug) para obter Authorization Code de uma conta.
-- Enviar Request para ```/oidc/exchange``` com o Code
+- Enviar Request para ```/oidc/exchange``` com o auth code do Google **OU** enviar request para ```/oidc/validate``` para validar idToken da api da Microsoft
   - Persiste o usuário e suas informações na base de dados e retorna o clientId do user
 - Obter Access Token com o clientId através de ```/pkce/``` (**Authorization Code Grant With PKCE**) ou ```/codegrant/``` (**Authorization Code Grant**)
   - As rotas ```/authorize``` desses endpoints validam o clientId e retornam o Auth Code (Como se estivessem simulando a tela de login)
@@ -27,6 +27,7 @@
 
 ### **Detalhes e Documentação:**
 - Swagger disponível em ```/api/oauth/swagger-ui/index.html``` para testes
+- Autenticação OpenID pode ser feita através do Google ou Microsoft.
 - Dados do usuário são persistidos em um banco em mememória (H2), após login com openID
 - Tokens gerados pelo servidor para autorização também são persistidos em memória
 - O servidor automaticamente cria um usuário de testes (```Bootstrap.java```). O clienteId do test user é printado no final do log de inicialização

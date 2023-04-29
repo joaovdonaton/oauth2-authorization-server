@@ -11,6 +11,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.Claim;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,8 @@ public class OIDCAuthService {
      * @param code auth code
      * troca o auth code por um access token e ID token e faz a validação
      * @return retorna o email do usuário autenticado, null caso a operação fracasse
+     *
+     * utilizado para api do google
      */
     public User exchange(String code){
         RestTemplate template = new RestTemplate();
@@ -57,28 +60,21 @@ public class OIDCAuthService {
 
         GoogleOIDCExchangeResponse bodyResp = resp.getBody();
 
-        var claims = validateIdToken(bodyResp.getId_token());
-        if(claims == null){
-            throw new ApiException("Failed to validate id token", HttpStatus.UNAUTHORIZED);
-        }
-
-        //claims.entrySet().stream().forEach(c -> System.out.println(c.getKey() + " : " + c.getValue()));
-
-        //verificar caso o usuário já tenha um login na plataforma
-        var emailMatch = usersService.findByEmail(claims.get("email").asString());
-        if(emailMatch != null) return emailMatch;
-
-        return usersService.save(new User(claims.get("email").asString(), claims.get("name").asString()));
+        return registerUserFromClaims(validateIdToken(bodyResp.getId_token()));
     }
 
     /**
-     * @param idToken
      * @return retorna null se o token não for validado, caso contrário, retorna os claims
      */
     private Map<String, Claim> validateIdToken(String idToken) {
         var jwt = JWT.decode(idToken);
         try {
-            JwkProvider provider = new UrlJwkProvider(new URL(apiCredentialsSettings.getGooglePubKeysUrl()));
+            JwkProvider provider;
+            if(jwt.getClaim("iss").asString().contains("microsoft"))
+                provider = new UrlJwkProvider(new URL(apiCredentialsSettings.getMicrosoftPubKeysUrl()));
+            else
+                provider = new UrlJwkProvider(new URL(apiCredentialsSettings.getGooglePubKeysUrl()));
+
             // getKeyId retorna o kid (identificar do chave, para quando temos mais de uma chave para assinar e verificar os tokens)
             // essa chamada pega a public key correspondente
             Jwk jwk = provider.get(jwt.getKeyId());
@@ -93,5 +89,26 @@ public class OIDCAuthService {
         catch (JwkException | MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * @return valida os tokens obtidos através de plataformas que usam implicit flow (Microsoft) e cadastra o user na
+     * base de dados
+     */
+    public User implicitFlowValidation(String idToken){
+        return registerUserFromClaims(validateIdToken(idToken));
+    }
+
+    @Transactional
+    public User registerUserFromClaims(Map<String, Claim> claims){
+        if(claims == null){
+            throw new ApiException("Failed to validate id token", HttpStatus.UNAUTHORIZED);
+        }
+
+        //verificar caso o usuário já tenha um login na plataforma
+        var emailMatch = usersService.findByEmail(claims.get("email").asString());
+        if(emailMatch != null) return emailMatch;
+
+        return usersService.save(new User(claims.get("email").asString(), claims.get("name").asString()));
     }
 }
