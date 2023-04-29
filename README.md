@@ -11,6 +11,9 @@
   - Crie um projeto no GCP console
   - Configure as credenciais para OAuth
   - Adicione a uri do oidc debugger (https://oidcdebugger.com/debug) e da aplicação nas urls autorizadas
+- Microsoft API para OpenID:
+  - Registre um aplicativo no Portal Microsoft Azure
+  - Na aba de "Autenticação" habilite a opção "Tokens de ID (usados para fluxos implícitos e híbridos)", configure a uri de redirect para o oidc debugger, e também configure os "Tipos de conta com suporte" para contas pessoais Microsoft.
 - Utilize o comando ```./mvnw spring-boot:run``` ou use o Intellij para compilar e rodar
 
 ### Modo de Uso:
