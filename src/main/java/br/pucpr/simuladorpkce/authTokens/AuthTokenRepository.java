@@ -8,5 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface AuthTokenRepository extends JpaRepository<AuthToken, UUID> {
-    boolean existsAuthTokenByTokenValueAndTokenType(String value, AuthTokenType tokenType);
+    AuthToken findAuthTokenByTokenValueAndTokenType(String tokenValue, AuthTokenType tokenType);
 }

@@ -17,7 +17,7 @@ public class AuthTokenService {
         return repository.save(at);
     }
 
-    public boolean existsByTokenValueAndType(String value, AuthTokenType type){
-        return repository.existsAuthTokenByTokenValueAndTokenType(value, type);
+    public AuthToken findByValueAndType(String value, AuthTokenType type){
+        return repository.findAuthTokenByTokenValueAndTokenType(value, type);
     }
 }

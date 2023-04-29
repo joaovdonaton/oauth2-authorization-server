@@ -36,7 +36,7 @@ public class PKCEAuthService {
         var code = utils.generateRandomString(32);
         challenges.put(code, challenge);
 
-        authTokenService.save(new AuthToken(AuthTokenType.AUTHORIZATION, code));
+        authTokenService.save(new AuthToken(AuthTokenType.AUTHORIZATION, code, clientId));
 
         return code;
     }
@@ -53,7 +53,11 @@ public class PKCEAuthService {
         if(!base64Hash.equals(challenges.get(authCode)))
             throw new ApiException("Incorrect code verifier", HttpStatus.UNAUTHORIZED);
 
-        var token = authTokenService.save(new AuthToken(AuthTokenType.ACCESS, utils.generateRandomString(32)));
+        var authCodeToken = authTokenService.findByValueAndType(authCode, AuthTokenType.AUTHORIZATION);
+        if(authCodeToken == null) throw new ApiException("Invalid Authorization Code", HttpStatus.FORBIDDEN);
+
+        var token =
+                authTokenService.save(new AuthToken(AuthTokenType.ACCESS, utils.generateRandomString(32), authCodeToken.getOwnerClientId()));
 
         return token.getTokenValue();
     }

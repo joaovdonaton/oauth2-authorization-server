@@ -22,8 +22,11 @@ public class AuthToken {
     @Column(unique = true)
     private String tokenValue;
 
-    public AuthToken(AuthTokenType tokenType, String tokenValue) {
+    private String ownerClientId;
+
+    public AuthToken(AuthTokenType tokenType, String tokenValue, String ownerClientId) {
         this.tokenType = tokenType;
         this.tokenValue = tokenValue;
+        this.ownerClientId = ownerClientId;
     }
 }

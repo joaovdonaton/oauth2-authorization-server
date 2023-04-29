@@ -36,17 +36,18 @@ public class CodeGrantAuthService {
         if(!usersService.existsById(UUID.fromString(clientId)))
             throw new ApiException("Client not registered", HttpStatus.UNAUTHORIZED);
 
-        var token = authTokenService.save(new AuthToken(AuthTokenType.AUTHORIZATION, utils.generateRandomString(32)));
+        var token = authTokenService.save(new AuthToken(AuthTokenType.AUTHORIZATION, utils.generateRandomString(32), clientId));
 
         return token.getTokenValue();
     }
 
     public String generateAccessToken(String authCode, String appId, String appSecret) {
-        if(!authTokenService.existsByTokenValueAndType(authCode, AuthTokenType.AUTHORIZATION))
+        var authCodeToken = authTokenService.findByValueAndType(authCode, AuthTokenType.AUTHORIZATION);
+        if(authCodeToken == null)
             throw new ApiException("Invalid Authorization Token", HttpStatus.FORBIDDEN);
 
         if(registeredApps.containsKey(appId) && registeredApps.get(appId).equals(appSecret)) {
-            var token = authTokenService.save(new AuthToken(AuthTokenType.ACCESS, utils.generateRandomString(32)));
+            var token = authTokenService.save(new AuthToken(AuthTokenType.ACCESS, utils.generateRandomString(32),authCodeToken.getOwnerClientId()));
 
             return token.getTokenValue();
         }
