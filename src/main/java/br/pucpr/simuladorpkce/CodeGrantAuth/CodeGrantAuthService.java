@@ -1,4 +1,4 @@
-package br.pucpr.simuladorpkce.PKCEAuth;
+package br.pucpr.simuladorpkce.CodeGrantAuth;
 
 import br.pucpr.simuladorpkce.lib.error.exceptions.ApiException;
 import br.pucpr.simuladorpkce.lib.utils.PKCEUtils;
@@ -9,14 +9,17 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
-public class PKCEAuthService {
+public class CodeGrantAuthService {
     private final PKCEUtils utils;
     private final UsersService usersService;
 
-    public PKCEAuthService(PKCEUtils utils, UsersService usersService) {
+    public CodeGrantAuthService(PKCEUtils utils, UsersService usersService) {
         this.utils = utils;
         this.usersService = usersService;
     }

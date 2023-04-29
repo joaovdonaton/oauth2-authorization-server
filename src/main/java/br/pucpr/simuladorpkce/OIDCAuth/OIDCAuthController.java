@@ -20,6 +20,6 @@ public class OIDCAuthController {
     public RegisteredUserInfoDTO registerUser(@RequestParam String code){
         User u = service.exchange(code);
 
-        return new RegisteredUserInfoDTO(u.getEmail(), u.getName());
+        return new RegisteredUserInfoDTO(u.getId().toString(), u.getEmail(), u.getName());
     }
 }
