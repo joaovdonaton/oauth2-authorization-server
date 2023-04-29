@@ -20,9 +20,13 @@
 - Obter Access Token com o clientId através de ```/pkce/``` (**Authorization Code Grant With PKCE**) ou ```/codegrant/``` (**Authorization Code Grant**)
   - As rotas ```/authorize``` desses endpoints validam o clientId e retornam o Auth Code (Como se estivessem simulando a tela de login)
   - As rotas ```/exchange``` validam o verifier (PKCE) ou validam o appId e appSecret (Code Grant normal)
+    - appId e appSecret validos estão em um map no ```CodeGrantAuthService.java```
 
 ### **Detalhes e Documentação:**
 - Swagger disponível em ```/api/oauth/swagger-ui/index.html``` para testes
+- Dados do usuário são persistidos em um banco em mememória (H2), após login com openID
+- Tokens gerados pelo servidor para autorização também são persistidos em memória
+- O servidor automaticamente cria um usuário de testes (```Bootstrap.java```). O clienteId do test user é printado no final do log de inicialização
 - Endpoints da API estão todos dentro do context path: ```/api/oauth/```
   - **Authorization Code Grant with PKCE**: ```/pkce/```
     - ```/authorize``` recebe o clientID e o challenge, retornar o Authorization Code

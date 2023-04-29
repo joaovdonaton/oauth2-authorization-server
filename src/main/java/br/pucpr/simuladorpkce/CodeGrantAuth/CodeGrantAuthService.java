@@ -1,26 +1,29 @@
 package br.pucpr.simuladorpkce.CodeGrantAuth;
 
+import br.pucpr.simuladorpkce.authTokens.AuthToken;
+import br.pucpr.simuladorpkce.authTokens.AuthTokenService;
+import br.pucpr.simuladorpkce.authTokens.enums.AuthTokenType;
 import br.pucpr.simuladorpkce.lib.error.exceptions.ApiException;
 import br.pucpr.simuladorpkce.lib.utils.SecurityUtils;
 import br.pucpr.simuladorpkce.users.UsersService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @Service
 public class CodeGrantAuthService {
     private final UsersService usersService;
     private final SecurityUtils utils;
+    private final AuthTokenService authTokenService;
 
-    public CodeGrantAuthService(UsersService usersService, SecurityUtils utils) {
+    public CodeGrantAuthService(UsersService usersService, SecurityUtils utils, AuthTokenService authTokenService) {
         this.usersService = usersService;
         this.utils = utils;
+        this.authTokenService = authTokenService;
     }
 
+    // app secrets e app ids validos
     private final static Map<String, String> registeredApps = new HashMap<>();
 
     static {
@@ -33,12 +36,20 @@ public class CodeGrantAuthService {
         if(!usersService.existsById(UUID.fromString(clientId)))
             throw new ApiException("Client not registered", HttpStatus.UNAUTHORIZED);
 
-        return utils.generateRandomString(32);
+        var token = authTokenService.save(new AuthToken(AuthTokenType.AUTHORIZATION, utils.generateRandomString(32)));
+
+        return token.getTokenValue();
     }
 
     public String generateAccessToken(String authCode, String appId, String appSecret) {
-        if(registeredApps.containsKey(appId) && registeredApps.get(appId).equals(appSecret))
-            return utils.generateRandomString(32);
-        throw new ApiException("Failed to generate Access Token: Invalid Credentials", HttpStatus.UNAUTHORIZED);
+        if(!authTokenService.existsByTokenValueAndType(authCode, AuthTokenType.AUTHORIZATION))
+            throw new ApiException("Invalid Authorization Token", HttpStatus.FORBIDDEN);
+
+        if(registeredApps.containsKey(appId) && registeredApps.get(appId).equals(appSecret)) {
+            var token = authTokenService.save(new AuthToken(AuthTokenType.ACCESS, utils.generateRandomString(32)));
+
+            return token.getTokenValue();
+        }
+        throw new ApiException("Failed to generate Access AuthToken: Invalid Credentials", HttpStatus.UNAUTHORIZED);
     }
 }

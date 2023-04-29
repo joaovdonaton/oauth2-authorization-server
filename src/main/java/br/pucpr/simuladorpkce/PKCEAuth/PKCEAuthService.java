@@ -1,5 +1,8 @@
 package br.pucpr.simuladorpkce.PKCEAuth;
 
+import br.pucpr.simuladorpkce.authTokens.AuthToken;
+import br.pucpr.simuladorpkce.authTokens.AuthTokenService;
+import br.pucpr.simuladorpkce.authTokens.enums.AuthTokenType;
 import br.pucpr.simuladorpkce.lib.error.exceptions.ApiException;
 import br.pucpr.simuladorpkce.lib.utils.SecurityUtils;
 import br.pucpr.simuladorpkce.users.UsersService;
@@ -15,10 +18,12 @@ import java.util.*;
 public class PKCEAuthService {
     private final SecurityUtils utils;
     private final UsersService usersService;
+    private final AuthTokenService authTokenService;
 
-    public PKCEAuthService(SecurityUtils utils, UsersService usersService) {
+    public PKCEAuthService(SecurityUtils utils, UsersService usersService, AuthTokenService authTokenService) {
         this.utils = utils;
         this.usersService = usersService;
+        this.authTokenService = authTokenService;
     }
 
     // <authcode, challenge>
@@ -30,6 +35,8 @@ public class PKCEAuthService {
 
         var code = utils.generateRandomString(32);
         challenges.put(code, challenge);
+
+        authTokenService.save(new AuthToken(AuthTokenType.AUTHORIZATION, code));
 
         return code;
     }
@@ -46,6 +53,8 @@ public class PKCEAuthService {
         if(!base64Hash.equals(challenges.get(authCode)))
             throw new ApiException("Incorrect code verifier", HttpStatus.UNAUTHORIZED);
 
-        return utils.generateRandomString(32);
+        var token = authTokenService.save(new AuthToken(AuthTokenType.ACCESS, utils.generateRandomString(32)));
+
+        return token.getTokenValue();
     }
 }
